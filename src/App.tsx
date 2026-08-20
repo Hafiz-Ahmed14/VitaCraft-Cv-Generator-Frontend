@@ -67,7 +67,7 @@ function CVBuilderPage() {
                 <h1 style={{ color: "#5B61C3" }}>CV Builder</h1>
 
                 <p style={{ color: "#667085", fontSize: "18px" }}>
-                    This page is under construction.
+                    This page is under construction..
                 </p>
             </div>
         </div>
