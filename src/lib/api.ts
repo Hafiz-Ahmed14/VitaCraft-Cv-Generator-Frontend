@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
 type CsrfTokenResponse = {
     token: string;
@@ -15,6 +15,43 @@ export const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
+
+type RetriableRequestConfig = InternalAxiosRequestConfig & {
+    _retriedAfterRefresh?: boolean;
+};
+
+let refreshRequest: Promise<void> | null = null;
+
+async function refreshAccessToken(): Promise<void> {
+    const csrfResponse = await api.get<CsrfTokenResponse>('/csrf-token');
+    await api.post('/v1/auth/refresh', {}, {
+        headers: { 'X-CSRF-TOKEN': csrfResponse.data.token },
+    });
+}
+
+api.interceptors.response.use(
+    (response) => response,
+    async (error: AxiosError) => {
+        const request = error.config as RetriableRequestConfig | undefined;
+        const isAuthenticationRequest = request?.url?.startsWith('/v1/auth/');
+
+        if (error.response?.status !== 401 || !request || request._retriedAfterRefresh || isAuthenticationRequest) {
+            return Promise.reject(error);
+        }
+
+        request._retriedAfterRefresh = true;
+        refreshRequest ??= refreshAccessToken().finally(() => {
+            refreshRequest = null;
+        });
+
+        try {
+            await refreshRequest;
+            return api(request);
+        } catch (refreshError) {
+            return Promise.reject(refreshError);
+        }
+    },
+);
 
 export async function postWithCsrf<TResponse, TRequest>(
     url: string,
