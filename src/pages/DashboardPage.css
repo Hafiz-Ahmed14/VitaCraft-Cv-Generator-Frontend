@@ -8,10 +8,14 @@
 }
 
 .dashboard-brand {
-    color: #545ac5;
-    font-size: 1.45rem;
-    font-weight: 800;
-    letter-spacing: -0.05em;
+    align-items: center;
+    display: inline-flex;
+}
+
+.dashboard-brand img {
+    display: block;
+    height: 38px;
+    max-width: 170px;
 }
 
 .dashboard-user {
@@ -19,16 +23,74 @@
     font-weight: 600;
 }
 
-.dashboard-logout {
-    border-color: #c9ccee;
-    color: #4f55be;
-    font-weight: 600;
+.dashboard-profile-trigger {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 0.75rem;
+    color: #34405d;
+    display: flex;
+    gap: 0.65rem;
+    padding: 0.3rem;
 }
 
-.dashboard-logout:hover,
-.dashboard-logout:focus {
-    background: #4f55be;
-    border-color: #4f55be;
+.dashboard-profile-trigger:hover,
+.dashboard-profile-trigger:focus-visible {
+    background: #f1f2ff;
+    outline: none;
+}
+
+.dashboard-avatar {
+    align-items: center;
+    background: linear-gradient(135deg, #656bd2, #8d60c8);
+    border-radius: 50%;
+    color: white;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 0.76rem;
+    font-weight: 800;
+    height: 2.25rem;
+    justify-content: center;
+    letter-spacing: 0.04em;
+    width: 2.25rem;
+}
+
+.dashboard-avatar--large {
+    font-size: 1rem;
+    height: 3.25rem;
+    width: 3.25rem;
+}
+
+.dashboard-profile-summary .dashboard-avatar--large {
+    box-shadow: 0 0.4rem 1rem rgba(86, 93, 202, 0.25);
+}
+
+.dashboard-chevron {
+    height: 1rem;
+    width: 1rem;
+}
+
+.dashboard-profile-menu {
+    background: white;
+    border: 1px solid #e4e6f0;
+    border-radius: 0.9rem;
+    min-width: 17rem;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.75rem);
+    z-index: 20;
+}
+
+.dashboard-dropdown-logout {
+    color: #c73d4a;
+    font-weight: 700;
+}
+
+.dashboard-dropdown-logout:hover,
+.dashboard-dropdown-logout:focus {
+    background: #fff0f1;
+    color: #aa2835;
 }
 
 .dashboard-welcome {
@@ -81,4 +143,8 @@
 .dashboard-use-template:focus {
     background: #444ab2;
     border-color: #444ab2;
+}
+
+.dashboard-spinner {
+    color: #565dca;
 }

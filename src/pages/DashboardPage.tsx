@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import type { CvTemplate } from '../components/dashboard/TemplateCard';
 import { TemplateCard } from '../components/dashboard/TemplateCard';
 import { DashboardHeader } from '../components/dashboard/DashboardHeader';
@@ -7,11 +8,22 @@ import templateExecutive from '../assets/images/Template3home.png';
 import templateMinimal from '../assets/images/Template4home.png';
 import templateCreative from '../assets/images/Template5home.png';
 import templateEditorial from '../assets/images/Template6home.png';
+import { api, postWithCsrf } from '../lib/api';
 import './DashboardPage.css';
 
 type DashboardPageProps = {
-    userName: string;
     navigate: (path: string) => void;
+};
+
+type UserProfile = {
+    userId: string;
+    username: string;
+    email: string;
+};
+
+type ApiResponse<T> = {
+    success: boolean;
+    data: T;
 };
 
 const templates: CvTemplate[] = [
@@ -23,24 +35,67 @@ const templates: CvTemplate[] = [
     { id: 'editorial', name: 'Editorial', description: 'An elegant, content-led layout with visual character.', preview: templateEditorial },
 ];
 
-export function DashboardPage({ userName, navigate }: DashboardPageProps) {
-    const handleLogout = () => {
-        sessionStorage.removeItem('vitacraft_user_name');
-        navigate('/login');
+export function DashboardPage({ navigate }: DashboardPageProps) {
+    const [user, setUser] = useState<UserProfile | null>(null);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const loadProtectedPage = async () => {
+            try {
+                const response = await api.get<ApiResponse<UserProfile>>('/v1/page/protected');
+                if (!response.data.success || !response.data.data) {
+                    throw new Error('The user profile was not returned.');
+                }
+
+                if (isMounted) {
+                    setUser(response.data.data);
+                }
+            } catch {
+                if (isMounted) {
+                    navigate('/login');
+                }
+            }
+        };
+
+        void loadProtectedPage();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [navigate]);
+
+    const handleLogout = async () => {
+        try {
+            await postWithCsrf('/v1/auth/logout', {});
+        } finally {
+            navigate('/login');
+        }
     };
 
     const handleUseTemplate = () => {
         navigate('/generatecv');
     };
 
+    if (!user) {
+        return (
+            <div className="dashboard-page-modern min-vh-100 d-flex align-items-center justify-content-center">
+                <div className="text-center text-secondary">
+                    <div className="spinner-border dashboard-spinner mb-3" role="status" />
+                    <p className="mb-0">Checking your session...</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="dashboard-page-modern min-vh-100">
-            <DashboardHeader userName={userName} onLogout={handleLogout} />
+            <DashboardHeader userName={user.username} email={user.email} onLogout={handleLogout} />
 
             <main className="container py-5">
                 <section className="dashboard-welcome p-4 p-md-5 mb-5 rounded-4">
                     <p className="dashboard-eyebrow mb-2">YOUR WORKSPACE</p>
-                    <h1 className="display-6 fw-bold mb-3">Welcome back, {userName}.</h1>
+                    <h1 className="display-6 fw-bold mb-3">Welcome back, {user.username}.</h1>
                     <p className="mb-0 text-secondary">Select a template to start shaping a CV that makes your experience stand out.</p>
                 </section>
 

@@ -36,10 +36,7 @@ const appRoutes = [
     { path: '/register', element: <RegisterPage navigate={(path) => { window.location.hash = path; }} /> },
     {
         path: '/dashboard',
-        element: <DashboardPage
-            userName={sessionStorage.getItem('vitacraft_user_name') || 'VitaCraft User'}
-            navigate={(path) => { window.location.hash = path; }}
-        />,
+        element: <DashboardPage navigate={(path) => { window.location.hash = path; }} />,
     },
     { path: '/generatecv', element: <CVBuilderPage /> },
     { path: '/template1home', element: <CVBuilderPage /> },

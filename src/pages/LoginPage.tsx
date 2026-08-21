@@ -27,7 +27,6 @@ export function LoginPage({ navigate }: LoginPageProps) {
                 return;
             }
 
-            sessionStorage.setItem('vitacraft_user_name', email.trim().split('@')[0]);
             setMessage(data.message || 'Login successful.');
             window.setTimeout(() => navigate(data.data?.url || '/dashboard'), 500);
         } catch (error) {
