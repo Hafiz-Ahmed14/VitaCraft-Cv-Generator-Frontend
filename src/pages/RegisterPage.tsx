@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import logoImage from '../assets/logo/vitacraft-logo.svg';
+import { getApiErrorMessage, postWithCsrf } from '../lib/api';
 
 type RegisterPageProps = { navigate: (path: string) => void };
 
@@ -17,27 +18,25 @@ export function RegisterPage({ navigate }: RegisterPageProps) {
         setMessage('');
 
         if (username.trim().length < 3) { setMessage('Username must be at least 3 characters long.'); return; }
-        if (password.length < 6) { setMessage('Password must be at least 6 characters long.'); return; }
+        if (password.length < 8) { setMessage('Password must be at least 8 characters long.'); return; }
         if (password !== confirmPassword) { setMessage('Passwords do not match.'); return; }
 
         setLoading(true);
         try {
-            const response = await fetch('/cv/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: username.trim(), email: email.trim(), password }),
-            });
-            const data = await response.json().catch(() => ({}));
+            const data = await postWithCsrf<{ success: boolean; message: string }, { username: string; email: string; password: string }>(
+                '/v1/user/registration',
+                { username: username.trim(), email: email.trim(), password },
+            );
 
-            if (!response.ok) {
-                setMessage(typeof data === 'string' ? data : data.message || data.error || 'Registration failed. Please try again.');
+            if (!data.success) {
+                setMessage(data.message || 'Registration failed. Please try again.');
                 return;
             }
 
-            setMessage('Registration successful. Redirecting to login...');
-            window.setTimeout(() => navigate('/login'), 700);
-        } catch {
-            setMessage('Unable to connect to the server. Please try again.');
+            setMessage(`${data.message || 'User Registration Sucessfull'} Your account must be activated before you can log in.`);
+            window.setTimeout(() => navigate('/login'), 1200);
+        } catch (error) {
+            setMessage(getApiErrorMessage(error, 'Unable to connect to the server. Please try again.'));
         } finally {
             setLoading(false);
         }

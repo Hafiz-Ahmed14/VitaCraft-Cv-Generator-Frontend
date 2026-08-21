@@ -1,0 +1,84 @@
+.dashboard-page-modern {
+    background: #f7f8fc;
+    color: #1d2440;
+}
+
+.dashboard-header {
+    border-color: #e7e9f2 !important;
+}
+
+.dashboard-brand {
+    color: #545ac5;
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+}
+
+.dashboard-user {
+    color: #475069;
+    font-weight: 600;
+}
+
+.dashboard-logout {
+    border-color: #c9ccee;
+    color: #4f55be;
+    font-weight: 600;
+}
+
+.dashboard-logout:hover,
+.dashboard-logout:focus {
+    background: #4f55be;
+    border-color: #4f55be;
+}
+
+.dashboard-welcome {
+    background: linear-gradient(115deg, #ecedff 0%, #f7f4ff 50%, #fff 100%);
+    border: 1px solid #e1e3fb;
+}
+
+.dashboard-eyebrow {
+    color: #5a60c7;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+.dashboard-template-card {
+    overflow: hidden;
+    border-radius: 1rem;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.dashboard-template-card:hover {
+    box-shadow: 0 1rem 2.5rem rgba(39, 46, 104, 0.14) !important;
+    transform: translateY(-4px);
+}
+
+.dashboard-template-preview {
+    align-items: center;
+    background: #e9ebf4;
+    display: flex;
+    height: 260px;
+    justify-content: center;
+    overflow: hidden;
+    padding: 1rem;
+}
+
+.dashboard-template-preview img {
+    box-shadow: 0 0.7rem 1.5rem rgba(34, 39, 79, 0.18);
+    height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.dashboard-use-template {
+    background: #565dca;
+    border-color: #565dca;
+    font-weight: 700;
+}
+
+.dashboard-use-template:hover,
+.dashboard-use-template:focus {
+    background: #444ab2;
+    border-color: #444ab2;
+}

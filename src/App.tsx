@@ -3,54 +3,7 @@ import { HomePage } from './pages/HomePage';
 import { ContactUsPage } from './pages/ContactUsPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
-
-const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'Login', path: '/login' },
-    { label: 'Register', path: '/register' },
-    { label: 'Dashboard', path: '/dashboard' },
-    { label: 'Generate CV', path: '/generatecv' },
-];
-
-function DashboardPage() {
-    return (
-        <div className="dashboard-page">
-            <header className="topbar topbar--dashboard">
-                <div className="brand-wrap">
-                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=200&q=80" alt="Brand" />
-                </div>
-                <nav className="nav-links">
-                    {navItems.map((item) => (
-                        <button key={item.path} type="button" onClick={() => window.location.hash = item.path}>{item.label}</button>
-                    ))}
-                </nav>
-            </header>
-
-            <main className="dashboard-main">
-                <section className="dashboard-intro">
-                    <h1>Welcome back</h1>
-                    <p>Choose a template and generate your CV in minutes.</p>
-                    <button type="button" className="primary-button" onClick={() => window.location.hash = '/generatecv'}>Generate Your CV</button>
-                </section>
-
-                <section className="dashboard-grid">
-                    <div className="dashboard-card">
-                        <h3>Saved Templates</h3>
-                        <p>Classic, Modern, Cyan Panel, Editorial</p>
-                    </div>
-                    <div className="dashboard-card">
-                        <h3>Custom CV</h3>
-                        <p>Create a brand new resume from scratch.</p>
-                    </div>
-                    <div className="dashboard-card">
-                        <h3>Favourite Templates</h3>
-                        <p>Quick access to your most used layouts.</p>
-                    </div>
-                </section>
-            </main>
-        </div>
-    );
-}
+import { DashboardPage } from './pages/DashboardPage';
 
 function CVBuilderPage() {
     return (
@@ -81,7 +34,13 @@ const appRoutes = [
     { path: '/contactus', element: <ContactUsPage navigate={(path) => { window.location.hash = path; }} /> },
     { path: '/login', element: <LoginPage navigate={(path) => { window.location.hash = path; }} /> },
     { path: '/register', element: <RegisterPage navigate={(path) => { window.location.hash = path; }} /> },
-    { path: '/dashboard', element: <DashboardPage /> },
+    {
+        path: '/dashboard',
+        element: <DashboardPage
+            userName={sessionStorage.getItem('vitacraft_user_name') || 'VitaCraft User'}
+            navigate={(path) => { window.location.hash = path; }}
+        />,
+    },
     { path: '/generatecv', element: <CVBuilderPage /> },
     { path: '/template1home', element: <CVBuilderPage /> },
     { path: '/template3home', element: <CVBuilderPage /> },

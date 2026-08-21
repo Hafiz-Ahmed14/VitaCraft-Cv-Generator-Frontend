@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import logoImage from '../assets/logo/vitacraft-logo.svg';
+import { getApiErrorMessage, postWithCsrf } from '../lib/api';
 
 type LoginPageProps = { navigate: (path: string) => void };
 
 export function LoginPage({ navigate }: LoginPageProps) {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
@@ -16,22 +17,21 @@ export function LoginPage({ navigate }: LoginPageProps) {
         setLoading(true);
 
         try {
-            const response = await fetch('/cv/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: username.trim(), password }),
-            });
-            const data = await response.json().catch(() => ({}));
+            const data = await postWithCsrf<{ success: boolean; message: string; data?: { url?: string } }, { email: string; password: string }>(
+                '/v1/auth/login',
+                { email: email.trim(), password },
+            );
 
-            if (!response.ok) {
-                setMessage(data.error || data.message || 'Login failed. Please try again.');
+            if (!data.success) {
+                setMessage(data.message || 'Login failed. Please try again.');
                 return;
             }
 
-            setMessage('Login successful.');
-            window.setTimeout(() => navigate('/dashboard'), 500);
-        } catch {
-            setMessage('Unable to connect to the server. Please try again.');
+            sessionStorage.setItem('vitacraft_user_name', email.trim().split('@')[0]);
+            setMessage(data.message || 'Login successful.');
+            window.setTimeout(() => navigate(data.data?.url || '/dashboard'), 500);
+        } catch (error) {
+            setMessage(getApiErrorMessage(error, 'Unable to connect to the server. Please try again.'));
         } finally {
             setLoading(false);
         }
@@ -47,7 +47,7 @@ export function LoginPage({ navigate }: LoginPageProps) {
                         <p className="auth-subtitle">Continue building your professional CV.</p>
                         {message && <p className="auth-message">{message}</p>}
                         <form className="auth-form" onSubmit={handleSubmit}>
-                            <label>Email or Username<input value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Enter your email or username" required /></label>
+                            <label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Enter your email" required /></label>
                             <label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" required /></label>
                             <button type="submit" className="primary-button" disabled={loading}>{loading ? 'Logging in...' : 'Login'}</button>
                         </form>
